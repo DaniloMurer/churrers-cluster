@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: house
+  labels:
+    app: house
+spec:
+  selector:
+    matchLabels:
+      app: house
+  template:
+    metadata:
+      labels:
+        app: house
+    spec:
+      containers:
+      - name: house-client
+        resources:
+          requests:
+            memory: "100Mi"
+          limits:
+            memory: "120Mi"
+        image: registry.digitalocean.com/churrer/house:1.0.0
+        ports:
+        - containerPort: 80
+      - name: house-server
+        resources:
+          requests:
+            memory: "100Mi"
+          limits:
+            memory: "120Mi"
+        image: registry.digitalocean.com/churrer/house-server:1.0.0
+        ports:
+          - containerPort: 3000
+        env:
+          - name: DATABASE_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: mongo-config
+                key: mongo-host
+          - name: DATABASE_NAME
+            value: "house"
+          - name: DATABASE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mongo-auth
+                key: username
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mongo-auth
+                key: password

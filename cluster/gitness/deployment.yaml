@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitness
+  labels:
+    app: gitness
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitness
+  template:
+    metadata:
+      name: gitness
+      labels:
+        app: gitness
+    spec:
+      volumes:
+        - name: gitness-volume
+          persistentVolumeClaim:
+            claimName: gitness-pvc
+      containers:
+        - name: gitness
+          image: harness/gitness:3.0.0-beta.7
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          env:
+            - name: GITNESS_PRINCIPAL_ADMIN_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: gitness-admin-auth
+                  key: email
+            - name: GITNESS_PRINCIPAL_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gitness-admin-auth
+                  key: password
+            - name: GITNESS_URL_BASE
+              value: "https://git.churrer.xyz"
+          volumeMounts:
+            - mountPath: "/data"
+              name: gitness-volume
+      restartPolicy: Always
