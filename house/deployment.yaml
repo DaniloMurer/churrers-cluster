@@ -13,6 +13,8 @@ spec:
       labels:
         app: house
     spec:
+      imagePullSecrets:
+        - name: churrer-registry
       containers:
       - name: house-client
         resources:
@@ -20,7 +22,7 @@ spec:
             memory: "100Mi"
           limits:
             memory: "120Mi"
-        image: registry.digitalocean.com/churrer/house:1.0.0
+        image: git.churrer.xyz/churrer.xyz/house/house:0.1.0
         ports:
         - containerPort: 80
       - name: house-server
@@ -29,7 +31,7 @@ spec:
             memory: "100Mi"
           limits:
             memory: "120Mi"
-        image: registry.digitalocean.com/churrer/house-server:1.0.0
+        image: git.churrer.xyz/churrer.xyz/house/house-server:0.1.0
         ports:
           - containerPort: 3000
         env:
