@@ -25,30 +25,30 @@ spec:
         image: git.churrer.xyz/churrer.xyz/house/house:0.3.0
         ports:
         - containerPort: 3000
-      - name: house-server
-        resources:
-          requests:
-            memory: "100Mi"
-          limits:
-            memory: "120Mi"
-        image: git.churrer.xyz/churrer.xyz/house/house-server:0.2.0
-        ports:
-          - containerPort: 3000
-        env:
-          - name: DATABASE_HOST
-            valueFrom:
-              configMapKeyRef:
-                name: mongo-config
-                key: mongo-host
-          - name: DATABASE_NAME
-            value: "house"
-          - name: DATABASE_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: mongo-auth
-                key: username
-          - name: DATABASE_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: mongo-auth
-                key: password
+#      - name: house-server
+#        resources:
+#          requests:
+#            memory: "100Mi"
+#          limits:
+#            memory: "120Mi"
+#        image: git.churrer.xyz/churrer.xyz/house/house-server:0.2.0
+#        ports:
+#          - containerPort: 3000
+#        env:
+#          - name: DATABASE_HOST
+#            valueFrom:
+#              configMapKeyRef:
+#                name: mongo-config
+#                key: mongo-host
+#          - name: DATABASE_NAME
+#            value: "house"
+#          - name: DATABASE_USERNAME
+#            valueFrom:
+#              secretKeyRef:
+#                name: mongo-auth
+#                key: username
+#          - name: DATABASE_PASSWORD
+#            valueFrom:
+#              secretKeyRef:
+#                name: mongo-auth
+#                key: password
