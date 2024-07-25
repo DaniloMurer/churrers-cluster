@@ -23,13 +23,13 @@ spec:
             name: house
             port:
               number: 80
-  - host: "house-api.churrer.xyz"
-    http:
-      paths:
-        - pathType: Prefix
-          path: "/"
-          backend:
-            service:
-              name: house
-              port:
-                number: 3000
+#  - host: "house-api.churrer.xyz"
+#    http:
+#      paths:
+#        - pathType: Prefix
+#          path: "/"
+#          backend:
+#            service:
+#              name: house
+#              port:
+#                number: 3000
