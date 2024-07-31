@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: silverbullet
+  labels:
+    app: silverbullet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: silverbullet
+  template:
+    metadata:
+      name: silverbullet
+      labels:
+        app: silverbullet
+    spec:
+      volumes:
+        - name: silverbullet-volume
+          persistentVolumeClaim:
+            claimName: silverbullet-pvc
+      containers:
+        - name: silverbullet
+          image: zefhemel/silverbullet:0.8.5
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/space"
+              name: silverbullet-volume
+          env:
+            - name: SB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: silverbullet-auth
+                  name: aut
+      restartPolicy: Always
+      
