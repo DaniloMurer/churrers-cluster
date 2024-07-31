@@ -33,7 +33,7 @@ spec:
             - name: SB_USER
               valueFrom:
                 secretKeyRef:
-                  key: silverbullet-auth
-                  name: auth
+                  name: silverbullet-auth
+                  key: auth
       restartPolicy: Always
       
