@@ -22,7 +22,7 @@ spec:
             memory: "100Mi"
           limits:
             memory: "120Mi"
-        image: git.churrer.xyz/churrer.xyz/house/house:0.3.0
+        image: ghcr.io/danilomurer/churrer.xyz:0.3.0
         ports:
         - containerPort: 3000
 #      - name: house-server
