@@ -23,6 +23,8 @@ spec:
           limits:
             memory: "120Mi"
         image: ghcr.io/danilomurer/churrer.xyz:0.3.2
+        securityContext:
+          allowPrivilegeEscalation: false
         ports:
         - containerPort: 3000
 #      - name: house-server
