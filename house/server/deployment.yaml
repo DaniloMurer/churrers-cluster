@@ -27,7 +27,6 @@ spec:
               memory: "200Mi"
               cpu: "0.75"
               ephemeral-storage: "2Gi"
-          restartPolicy: Always
           image: ghcr.io/danilomurer/churrer.xyz-server:0.4.0
           securityContext:
             allowPrivilegeEscalation: false
