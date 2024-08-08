@@ -3,10 +3,9 @@ kind: Service
 metadata:
   name: house-server
 spec:
-  type: ClusterIP
+  selector:
+    app: house-server
   ports:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-  selector:
-    app: house-server
