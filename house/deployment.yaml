@@ -16,41 +16,23 @@ spec:
       imagePullSecrets:
         - name: churrer-registry
       containers:
-      - name: house-client
-        resources:
-          requests:
-            memory: "100Mi"
-          limits:
-            memory: "120Mi"
-        image: ghcr.io/danilomurer/churrer.xyz:0.3.2
-        securityContext:
-          allowPrivilegeEscalation: false
-        ports:
-        - containerPort: 3000
-#      - name: house-server
-#        resources:
-#          requests:
-#            memory: "100Mi"
-#          limits:
-#            memory: "120Mi"
-#        image: git.churrer.xyz/churrer.xyz/house/house-server:0.2.0
-#        ports:
-#          - containerPort: 3000
-#        env:
-#          - name: DATABASE_HOST
-#            valueFrom:
-#              configMapKeyRef:
-#                name: mongo-config
-#                key: mongo-host
-#          - name: DATABASE_NAME
-#            value: "house"
-#          - name: DATABASE_USERNAME
-#            valueFrom:
-#              secretKeyRef:
-#                name: mongo-auth
-#                key: username
-#          - name: DATABASE_PASSWORD
-#            valueFrom:
-#              secretKeyRef:
-#                name: mongo-auth
-#                key: password
+        - name: house-client
+          resources:
+            requests:
+              memory: "200Mi"
+              cpu: "1"
+              ephemeral-storage: "2Gi"
+            limits:
+              memory: "400Mi"
+              cpu: "1.5"
+              ephemeral-storage: "2Gi"
+          restartPolicy: Always
+          image: ghcr.io/danilomurer/churrer.xyz:0.4.0
+          securityContext:
+            allowPrivilegeEscalation: false
+          ports:
+            - containerPort: 3000
+          env:
+            - name: API_HOST
+              value: "http://house-server:8080"
+      automountServiceAccountToken: false

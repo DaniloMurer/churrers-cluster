@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: house-database
+  labels:
+    app: house-database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: house-database
+  template:
+    metadata:
+      name: house-database
+      labels:
+        app: house-database
+    spec:
+      volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: house-database-pvc
+      containers:
+        - name: house-database
+          image: postgres:16.3-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "0.5"
+              ephemeral-storage: "5Gi"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+              ephemeral-storage: "5Gi"
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: password
+            - name: POSTGRES_DB
+              value: house
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: data-volume
+      restartPolicy: Always
+      automountServiceAccountToken: false
+      

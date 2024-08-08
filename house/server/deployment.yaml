@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: house-server
+  labels:
+    app: house-server
+spec:
+  selector:
+    matchLabels:
+      app: house-server
+  template:
+    metadata:
+      labels:
+        app: house-server
+    spec:
+      imagePullSecrets:
+        - name: churrer-registry
+      containers:
+        - name: server
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "0.25"
+              ephemeral-storage: "2Gi"
+            limits:
+              memory: "200Mi"
+              cpu: "0.75"
+              ephemeral-storage: "2Gi"
+          restartPolicy: Always
+          image: ghcr.io/danilomurer/churrer.xyz-server:0.4.0
+          securityContext:
+            allowPrivilegeEscalation: false
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_CONNECTION
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-auth
+                  key: connection_string
+      automountServiceAccountToken: false
