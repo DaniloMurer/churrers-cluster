@@ -20,13 +20,13 @@ spec:
           resources:
             requests:
               memory: "200Mi"
-              cpu: "1"
+              cpu: "0.5"
               ephemeral-storage: "2Gi"
             limits:
               memory: "400Mi"
-              cpu: "1.5"
+              cpu: "1"
               ephemeral-storage: "2Gi"
-          image: ghcr.io/danilomurer/churrer.xyz:0.4.1
+          image: ghcr.io/danilomurer/churrer.xyz:0.5.0
           securityContext:
             allowPrivilegeEscalation: false
           ports:
