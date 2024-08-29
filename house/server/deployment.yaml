@@ -27,7 +27,7 @@ spec:
               memory: "200Mi"
               cpu: "0.50"
               ephemeral-storage: "2Gi"
-          image: ghcr.io/danilomurer/churrer.xyz-server:0.6.0
+          image: ghcr.io/danilomurer/churrer.xyz-server:0.6.1
           securityContext:
             allowPrivilegeEscalation: false
           ports:
