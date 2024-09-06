@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: triffnix
+  labels:
+    app: triffnix
+spec:
+  selector:
+    matchLabels:
+      app: triffnix
+  template:
+    metadata:
+      labels:
+        app: triffnix
+    spec:
+      volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: triffnix-pvc
+      containers:
+        - name: triffnix
+          resources:
+            requests:
+              memory: "210Mi"
+              cpu: "0.5"
+              ephemeral-storage: "2Gi"
+            limits:
+              memory: "400Mi"
+              cpu: "1"
+              ephemeral-storage: "2Gi"
+          image: ghcr.io/danilomurer/triffnix:1.0.0
+          volumeMounts:
+            - mountPath: /pb/pb_data
+              name: data-volume
+          securityContext:
+            allowPrivilegeEscalation: false
+          ports:
+            - containerPort: 8080
+      automountServiceAccountToken: false
