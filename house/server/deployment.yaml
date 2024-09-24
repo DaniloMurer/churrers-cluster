@@ -27,7 +27,7 @@ spec:
               memory: "200Mi"
               cpu: "0.50"
               ephemeral-storage: "2Gi"
-          image: ghcr.io/danilomurer/churrer.xyz-server:0.6.1
+          image: ghcr.io/danilomurer/churrer.xyz-server:0.7.0
           securityContext:
             allowPrivilegeEscalation: false
           ports:
@@ -49,3 +49,4 @@ spec:
                   name: admin-auth
                   key: password
       automountServiceAccountToken: false
+

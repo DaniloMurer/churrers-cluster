@@ -9,27 +9,28 @@ metadata:
 spec:
   tls:
     - hosts:
-      - churrer.xyz
-      - house-api.churrer.xyz
+        - churrer.xyz
+        - api.churrer.xyz
       secretName: house-tls
   rules:
-  - host: "churrer.xyz"
-    http:
-      paths:
-      - pathType: Prefix
-        path: "/"
-        backend:
-          service:
-            name: house
-            port:
-              number: 80
-#  - host: "house-api.churrer.xyz"
-#    http:
-#      paths:
-#        - pathType: Prefix
-#          path: "/"
-#          backend:
-#            service:
-#              name: house
-#              port:
-#                number: 3000
+    - host: "churrer.xyz"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: house
+                port:
+                  number: 80
+    - host: "api.churrer.xyz"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: house-server
+                port:
+                  number: 8080
+
