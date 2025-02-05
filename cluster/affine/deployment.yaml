@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: affine
+  labels:
+    app: affine
+spec:
+  selector:
+    matchLabels:
+      app: affine
+  template:
+    metadata:
+      labels:
+        app: affine
+    spec:
+      volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: affine-pvc
+        - name: storage-volume
+          persistentVolumeClaim:
+            claimName: affine-storage-pvc
+        - name: db-volume
+          persistentVolumeClaim:
+            claimName: affine-db-pvc
+      containers:
+        - name: affine
+          image: ghcr.io/toeverything/affine-graphql:stable
+          volumeMounts:
+            - mountPath: /root/.affine/storage
+              name: storage-volume
+            - mountPath: /root/.affine/config
+              name: data-volume
+          securityContext:
+            allowPrivilegeEscalation: false
+          env:
+            - name: REDIS_SERVER_HOST
+              value: localhost
+            - name: DATABASE_URL
+              value: postgresql://affine:nhDkEdU5VP03A675+.a2@localhost:5432/affine
+            - name: AFFINE_SERVER_EXTERNAL_URL
+              value: https://affine.churrer.xyz
+            - name: AFFINE_SERVER_HTTPS
+              value: "true"
+            - name: AFFINE_SERVER_HOST
+              value: affine.churrer.xyz
+          ports:
+            - containerPort: 3010
+        - name: affine-migration
+
+          image: ghcr.io/toeverything/affine-graphql:stable
+          volumeMounts:
+            - mountPath: /root/.affine/storage
+              name: storage-volume
+            - mountPath: /root/.affine/config
+              name: data-volume
+          securityContext:
+            allowPrivilegeEscalation: false
+          command: ['sh', '-c', 'node ./scripts/self-host-predeploy.js']
+          env:
+            - name: REDIS_SERVER_HOST
+              value: localhost
+            - name: DATABASE_URL
+              value: postgresql://affine:nhDkEdU5VP03A675+.a2@localhost:5432/affine
+        - name: redis
+          image: redis
+          ports:
+              - containerPort: 6379
+        - name: postgres
+          image: postgres:16-alpine
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: db-volume
+          env:
+            - name: POSTGRES_USER
+              value: affine
+            - name: POSTGRES_PASSWORD
+              value: "nhDkEdU5VP03A675+.a2"
+            - name: POSTGRES_DB
+              value: affine
+            - name: POSTGRES_INITDB_ARGS
+              value: --data-checksums
+            - name: PGDATA
+              value: /var/lib/postgresql/data/db-data
+          ports:
+            - containerPort: 5432
+      automountServiceAccountToken: false
