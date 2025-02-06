@@ -1,7 +1,57 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: affine
+  name: affine-deployment
+  labels:
+    app: affine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: affine
+  template:
+    metadata:
+      labels:
+        app: affine
+    spec:
+      volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: affine-pvc
+        - name: storage-volume
+          persistentVolumeClaim:
+            claimName: affine-storage-pvc
+      containers:
+        - name: affine
+          image: ghcr.io/toeverything/affine-graphql:stable
+          volumeMounts:
+            - mountPath: /root/.affine/storage
+              name: storage-volume
+            - mountPath: /root/.affine/config
+              name: data-volume
+          securityContext:
+            allowPrivilegeEscalation: false
+          env:
+            - name: REDIS_SERVER_HOST
+              value: affine-redis
+            - name: DATABASE_URL
+              value: postgresql://affine:nhDkEdU5VP03A675+.a2@affine-postgres:5432/affine
+            - name: AFFINE_SERVER_EXTERNAL_URL
+              value: https://affine.churrer.xyz
+            - name: AFFINE_SERVER_HTTPS
+              value: "true"
+            - name: AFFINE_SERVER_HOST
+              value: affine.churrer.xyz
+          ports:
+            - containerPort: 3010
+      automountServiceAccountToken: false
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: affine-migration
   labels:
     app: affine
 spec:
@@ -20,34 +70,8 @@ spec:
         - name: storage-volume
           persistentVolumeClaim:
             claimName: affine-storage-pvc
-        - name: db-volume
-          persistentVolumeClaim:
-            claimName: affine-db-pvc
       containers:
-        - name: affine
-          image: ghcr.io/toeverything/affine-graphql:stable
-          volumeMounts:
-            - mountPath: /root/.affine/storage
-              name: storage-volume
-            - mountPath: /root/.affine/config
-              name: data-volume
-          securityContext:
-            allowPrivilegeEscalation: false
-          env:
-            - name: REDIS_SERVER_HOST
-              value: localhost
-            - name: DATABASE_URL
-              value: postgresql://affine:nhDkEdU5VP03A675+.a2@localhost:5432/affine
-            - name: AFFINE_SERVER_EXTERNAL_URL
-              value: https://affine.churrer.xyz
-            - name: AFFINE_SERVER_HTTPS
-              value: "true"
-            - name: AFFINE_SERVER_HOST
-              value: affine.churrer.xyz
-          ports:
-            - containerPort: 3010
         - name: affine-migration
-
           image: ghcr.io/toeverything/affine-graphql:stable
           volumeMounts:
             - mountPath: /root/.affine/storage
@@ -59,13 +83,58 @@ spec:
           command: ['sh', '-c', 'node ./scripts/self-host-predeploy.js']
           env:
             - name: REDIS_SERVER_HOST
-              value: localhost
+              value: affine-redis
             - name: DATABASE_URL
-              value: postgresql://affine:nhDkEdU5VP03A675+.a2@localhost:5432/affine
+              value: postgresql://affine:nhDkEdU5VP03A675+.a2@affine-postgres:5432/affine
+      automountServiceAccountToken: false
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: affine-redis
+  labels:
+    app: affine-redis
+spec:
+  selector:
+    matchLabels:
+      app: affine-redis
+  template:
+    metadata:
+      labels:
+        app: affine-redis
+    spec:
+      containers:
         - name: redis
           image: redis
           ports:
-              - containerPort: 6379
+            - containerPort: 6379
+      automountServiceAccountToken: false
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: affine-postgres
+  labels:
+    app: affine-postgres
+spec:
+  selector:
+    matchLabels:
+      app: affine-postgres
+  template:
+    metadata:
+      labels:
+        app: affine-postgres
+    spec:
+      volumes:
+        - name: db-volume
+          persistentVolumeClaim:
+            claimName: affine-db-pvc
+      containers:
         - name: postgres
           image: postgres:16-alpine
           volumeMounts:

@@ -1,13 +1,44 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: affine
+  name: affine-service
+spec:
+  type: LoadBalancer
+  ports:
+    - name: client
+      port: 80
+      targetPort: 3010
+  selector:
+    app: affine
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: affine-postgres
 spec:
   type: ClusterIP
   ports:
     - name: client
-      port: 3010
-      targetPort: 3010
+      port: 5432
+      targetPort: 5432
   selector:
-    app: affine
+    app: affine-postgres
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: affine-redis
+spec:
+  type: ClusterIP
+  ports:
+    - name: client
+      port: 6379
+      targetPort: 6379
+  selector:
+    app: affine-redis
+
 
